@@ -1,0 +1,339 @@
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Windows Media Player</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 11px;
+    }
+
+    body {
+      background-color: #008080;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* Ретро-вікно */
+    .retro-window {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #dfdfdf #404040 #404040 #dfdfdf;
+      box-shadow: 2px 2px 0px #000;
+      width: 440px;
+      padding: 3px;
+    }
+
+    /* Заголовок вікна */
+    .title-bar {
+      background: linear-gradient(90deg, #000080, #1084d0);
+      color: white;
+      font-weight: bold;
+      padding: 3px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title-buttons button {
+      background: #c0c0c0;
+      border: 1px solid;
+      border-color: #dfdfdf #404040 #404040 #dfdfdf;
+      font-weight: bold;
+      font-size: 9px;
+      width: 16px;
+      height: 14px;
+      line-height: 9px;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    /* Рядок меню */
+    .menu-bar {
+      display: flex;
+      gap: 12px;
+      padding: 4px 6px;
+      border-bottom: 1px solid #808080;
+    }
+
+    .menu-bar span {
+      cursor: pointer;
+    }
+
+    .menu-bar span:first-letter {
+      text-decoration: underline;
+    }
+
+    /* Екран відтворення */
+    .player-screen {
+      background: #000;
+      height: 240px;
+      margin: 6px;
+      border: 2px solid;
+      border-color: #404040 #dfdfdf #dfdfdf #404040;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .audio-visualizer {
+      color: #00ff00;
+      font-family: monospace;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+
+    /* Секція керування */
+    .controls-container {
+      padding: 0 6px 6px 6px;
+    }
+
+    /* Прогрес-бар */
+    .track-slider-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+      width: 100%;
+    }
+
+    input[type=range]:focus {
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 4px;
+      background: #808080;
+      border: 1px solid #404040;
+      border-top: 1px solid #404040;
+      border-bottom: 1px solid #fff;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 14px;
+      width: 8px;
+      background: #c0c0c0;
+      border: 1px solid;
+      border-color: #dfdfdf #404040 #404040 #dfdfdf;
+      cursor: pointer;
+      margin-top: -6px;
+    }
+
+    /* Кнопки та регулятор гучності */
+    .buttons-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid;
+      border-color: #808080 #dfdfdf #dfdfdf #808080;
+      padding: 4px 6px;
+      background: #d4d0c8;
+    }
+
+    .playback-buttons {
+      display: flex;
+      gap: 3px;
+    }
+
+    .playback-buttons button {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #dfdfdf #404040 #404040 #dfdfdf;
+      width: 28px;
+      height: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .playback-buttons button:active {
+      border-color: #404040 #dfdfdf #dfdfdf #404040;
+      padding-top: 2px;
+      padding-left: 2px;
+    }
+
+    .volume-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      width: 110px;
+    }
+
+    /* Статус-бар */
+    .status-bar {
+      margin-top: 6px;
+      border: 1px solid;
+      border-color: #808080 #dfdfdf #dfdfdf #808080;
+      padding: 2px 4px;
+      font-size: 10px;
+      display: flex;
+      justify-content: space-between;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="retro-window">
+  <!-- Заголовок -->
+  <div class="title-bar">
+    <span>Windows Media Player</span>
+    <div class="title-buttons">
+      <button>_</button>
+      <button>&#9633;</button>
+      <button>&#10005;</button>
+    </div>
+  </div>
+
+  <!-- Меню -->
+  <div class="menu-bar">
+    <span onclick="openFileDialog()"><u>F</u>ile</span>
+    <span onclick="alert('Windows Media Player v1.0\nClassic Edition')"><u>H</u>elp</span>
+  </div>
+
+  <!-- Прихований input для вибору медіафайлу -->
+  <input type="file" id="fileInput" accept="video/*,audio/*" style="display: none;" onchange="loadMedia(event)">
+
+  <!-- Екран для відео / аудіо -->
+  <div class="player-screen">
+    <video id="mediaPlayer" preload="metadata"></video>
+    <div id="audioLabel" class="audio-visualizer">&#9835; Відтворення аудіо...</div>
+  </div>
+
+  <!-- Панель керування -->
+  <div class="controls-container">
+    <div class="track-slider-container">
+      <input type="range" id="seekSlider" value="0" min="0" step="0.1">
+    </div>
+
+    <div class="buttons-row">
+      <div class="playback-buttons">
+        <button title="Play" onclick="playMedia()">&#9658;</button>
+        <button title="Pause" onclick="pauseMedia()"><b>||</b></button>
+        <button title="Stop" onclick="stopMedia()">&#9632;</button>
+        <button title="Rewind 5s" onclick="seekRelative(-5)">&#9668;&#9668;</button>
+        <button title="Forward 5s" onclick="seekRelative(5)">&#9658;&#9658;</button>
+        <button title="Open File" onclick="openFileDialog()">&#128194;</button>
+      </div>
+
+      <div class="volume-group">
+        <span>&#128266;</span>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" oninput="changeVolume(this.value)">
+      </div>
+    </div>
+
+    <!-- Статус-бар -->
+    <div class="status-bar">
+      <span id="statusText">Готово</span>
+      <span id="timeDisplay">00:00 / 00:00</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const player = document.getElementById('mediaPlayer');
+  const fileInput = document.getElementById('fileInput');
+  const seekSlider = document.getElementById('seekSlider');
+  const volumeSlider = document.getElementById('volumeSlider');
+  const statusText = document.getElementById('statusText');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const audioLabel = document.getElementById('audioLabel');
+
+  function openFileDialog() {
+    fileInput.click();
+  }
+
+  function loadMedia(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    player.src = url;
+    statusText.innerText = "Файл: " + file.name;
+
+    if (file.type.startsWith('audio/')) {
+      audioLabel.style.display = 'block';
+    } else {
+      audioLabel.style.display = 'none';
+    }
+  }
+
+  function playMedia() {
+    if (!player.src) {
+      openFileDialog();
+      return;
+    }
+    player.play();
+    statusText.innerText = "Відтворення";
+  }
+
+  function pauseMedia() {
+    player.pause();
+    statusText.innerText = "Пауза";
+  }
+
+  function stopMedia() {
+    player.pause();
+    player.currentTime = 0;
+    statusText.innerText = "Зупинено";
+  }
+
+  function seekRelative(seconds) {
+    player.currentTime = Math.max(0, Math.min(player.duration || 0, player.currentTime + seconds));
+  }
+
+  function changeVolume(val) {
+    player.volume = val;
+  }
+
+  function formatTime(sec) {
+    if (isNaN(sec)) return "00:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+
+  // Оновлення таймлайну
+  player.addEventListener('loadedmetadata', () => {
+    seekSlider.max = player.duration;
+    timeDisplay.innerText = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+  });
+
+  player.addEventListener('timeupdate', () => {
+    seekSlider.value = player.currentTime;
+    timeDisplay.innerText = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+  });
+
+  player.addEventListener('ended', () => {
+    statusText.innerText = "Завершено";
+  });
+
+  seekSlider.addEventListener('input', () => {
+    player.currentTime = seekSlider.value;
+  });
+</script>
+
+</body>
+</html>
