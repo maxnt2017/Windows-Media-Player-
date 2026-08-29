@@ -1,85 +1,309 @@
+<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Windows Media Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Windows Media Player v2.1 (Build 21)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=VT323&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-desktop: #008080;
+      --win-bg: #c0c0c0;
+      --win-border-light: #ffffff;
+      --win-border-mid: #dfdfdf;
+      --win-border-dark: #808080;
+      --win-border-darkest: #000000;
+      --title-grad-start: #000080;
+      --title-grad-end: #1084d0;
+      --title-text: #ffffff;
+      --screen-bg: #000000;
+      --text-color: #000000;
+      --btn-active-bg: #b0b0b0;
+      --accent-led: #00ff66;
+      --accent-amber: #ffaa00;
+      --accent-red: #ff3333;
+    }
+
+    /* THEME: Windows XP Luna */
+    body.theme-xp {
+      --bg-desktop: #225ad7;
+      --win-bg: #ece9d8;
+      --win-border-light: #ffffff;
+      --win-border-mid: #dcd7ca;
+      --win-border-dark: #aca899;
+      --win-border-darkest: #716f64;
+      --title-grad-start: #0055ea;
+      --title-grad-end: #3b88fd;
+      --title-text: #ffffff;
+      --accent-led: #00f0ff;
+    }
+
+    /* THEME: Windows XP Silver */
+    body.theme-silver {
+      --bg-desktop: #708090;
+      --win-bg: #e0dfe3;
+      --win-border-light: #ffffff;
+      --win-border-mid: #d5d4d8;
+      --win-border-dark: #9e9da1;
+      --win-border-darkest: #555558;
+      --title-grad-start: #787a82;
+      --title-grad-end: #b6b8bf;
+      --title-text: #ffffff;
+      --accent-led: #55ff99;
+    }
+
+    /* THEME: Dark Studio 90s */
+    body.theme-dark {
+      --bg-desktop: #1e1e24;
+      --win-bg: #2d2d34;
+      --win-border-light: #4c4c57;
+      --win-border-mid: #3a3a44;
+      --win-border-dark: #19191d;
+      --win-border-darkest: #0c0c0e;
+      --title-grad-start: #111116;
+      --title-grad-end: #2e303d;
+      --title-text: #00e5ff;
+      --text-color: #f0f0f0;
+      --btn-active-bg: #202026;
+      --accent-led: #00ffaa;
+    }
+
+    /* THEME: Windows Me Millennium */
+    body.theme-me {
+      --bg-desktop: #186060;
+      --win-bg: #d4d0c8;
+      --win-border-light: #ffffff;
+      --win-border-mid: #e3dfd7;
+      --win-border-dark: #7a766e;
+      --win-border-darkest: #302e2a;
+      --title-grad-start: #0a6060;
+      --title-grad-end: #1ca8a8;
+      --title-text: #ffffff;
+      --accent-led: #33ffbb;
+    }
+
     * {
       box-sizing: border-box;
       user-select: none;
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-family: "Segoe UI", Tahoma, "MS Sans Serif", Geneva, sans-serif;
       font-size: 11px;
     }
 
     body {
-      background-color: #008080;
+      background-color: var(--bg-desktop);
+      background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 16px 16px;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
+      padding: 16px;
+      color: var(--text-color);
+      overflow-x: hidden;
     }
 
-    /* Ретро-вікно */
+    /* Desktop Window Wrapper */
+    .app-workspace {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: flex-start;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    /* Retro Windows Box */
     .retro-window {
-      background: #c0c0c0;
+      background: var(--win-bg);
       border: 2px solid;
-      border-color: #dfdfdf #404040 #404040 #dfdfdf;
-      box-shadow: 2px 2px 0px #000;
-      width: 440px;
+      border-color: var(--win-border-light) var(--win-border-darkest) var(--win-border-darkest) var(--win-border-light);
+      box-shadow: inset 1px 1px var(--win-border-mid), inset -1px -1px var(--win-border-dark), 3px 3px 10px rgba(0,0,0,0.5);
       padding: 3px;
+      position: relative;
     }
 
-    /* Заголовок вікна */
+    .main-window {
+      width: 520px;
+      min-width: 320px;
+      z-index: 10;
+    }
+
+    .tool-window {
+      width: 380px;
+      display: none;
+      z-index: 9;
+    }
+
+    .tool-window.active {
+      display: block;
+      animation: popIn 0.15s ease-out;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.96); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Title Bar */
     .title-bar {
-      background: linear-gradient(90deg, #000080, #1084d0);
-      color: white;
+      background: linear-gradient(90deg, var(--title-grad-start), var(--title-grad-end));
+      color: var(--title-text);
       font-weight: bold;
-      padding: 3px 4px;
+      padding: 3px 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      letter-spacing: 0.3px;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.6);
+      cursor: move;
+    }
+
+    .title-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .wmp-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.4));
+    }
+
+    .title-buttons {
+      display: flex;
+      gap: 2px;
+      flex-shrink: 0;
     }
 
     .title-buttons button {
-      background: #c0c0c0;
+      background: var(--win-bg);
       border: 1px solid;
-      border-color: #dfdfdf #404040 #404040 #dfdfdf;
+      border-color: var(--win-border-light) var(--win-border-darkest) var(--win-border-darkest) var(--win-border-light);
+      box-shadow: inset 1px 1px var(--win-border-mid), inset -1px -1px var(--win-border-dark);
       font-weight: bold;
-      font-size: 9px;
-      width: 16px;
-      height: 14px;
-      line-height: 9px;
+      font-size: 10px;
+      width: 18px;
+      height: 16px;
+      line-height: 10px;
       padding: 0;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
     }
 
-    /* Рядок меню */
+    .title-buttons button:active {
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+      box-shadow: none;
+      transform: translate(1px, 1px);
+    }
+
+    /* Menu Bar */
     .menu-bar {
       display: flex;
-      gap: 12px;
-      padding: 4px 6px;
-      border-bottom: 1px solid #808080;
+      position: relative;
+      background: var(--win-bg);
+      padding: 2px 4px;
+      border-bottom: 1px solid var(--win-border-dark);
+      margin-bottom: 3px;
     }
 
-    .menu-bar span {
+    .menu-item {
+      position: relative;
+      padding: 2px 7px;
       cursor: pointer;
     }
 
-    .menu-bar span:first-letter {
+    .menu-item:hover, .menu-item.active {
+      background: #000080;
+      color: #fff;
+    }
+
+    body.theme-xp .menu-item:hover, body.theme-xp .menu-item.active {
+      background: #316ac5;
+      color: #fff;
+    }
+
+    .menu-item u {
       text-decoration: underline;
     }
 
-    /* Екран відтворення */
-    .player-screen {
-      background: #000;
-      height: 240px;
-      margin: 6px;
+    /* Dropdown Menus */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--win-bg);
       border: 2px solid;
-      border-color: #404040 #dfdfdf #dfdfdf #404040;
+      border-color: var(--win-border-light) var(--win-border-darkest) var(--win-border-darkest) var(--win-border-light);
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.35);
+      z-index: 1000;
+      min-width: 170px;
+      padding: 2px;
+    }
+
+    .menu-item.active .dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 3px 12px 3px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      white-space: nowrap;
+      color: var(--text-color);
+    }
+
+    .dropdown-item:hover {
+      background: #000080;
+      color: #ffffff;
+    }
+
+    body.theme-xp .dropdown-item:hover {
+      background: #316ac5;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--win-border-dark);
+      border-bottom: 1px solid var(--win-border-light);
+      margin: 3px 1px;
+    }
+
+    .shortcut-badge {
+      font-size: 9px;
+      opacity: 0.7;
+      margin-left: 12px;
+    }
+
+    /* Media Display Screen */
+    .player-screen-wrapper {
+      position: relative;
+      background: var(--screen-bg);
+      border: 2px solid;
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+      box-shadow: inset 1px 1px 4px #000;
+      margin: 4px;
+      height: 270px;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
+      overflow: hidden;
+      cursor: pointer;
     }
 
     video {
@@ -87,33 +311,158 @@
       height: 100%;
       object-fit: contain;
       background: #000;
-    }
-
-    .audio-visualizer {
-      color: #00ff00;
-      font-family: monospace;
-      font-size: 13px;
-      text-align: center;
       display: none;
     }
 
-    /* Секція керування */
-    .controls-container {
-      padding: 0 6px 6px 6px;
+    video.active {
+      display: block;
     }
 
-    /* Прогрес-бар */
-    .track-slider-container {
+    /* Visualizer Canvas */
+    #visCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Screen Standby / Audio Overlay */
+    .screen-overlay-info {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--accent-led);
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      text-shadow: 0 0 6px rgba(0,255,100,0.6);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .screen-standby {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #8090a0;
+      z-index: 4;
+      text-align: center;
+    }
+
+    .cd-disk {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #333 15%, #aaa 18%, #444 35%, #888 50%, #222 70%, #999 100%);
+      border: 2px solid #555;
+      box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 0 8px rgba(255,255,255,0.4);
+      position: relative;
+      animation: spinCD 6s linear infinite paused;
+    }
+
+    .cd-disk.spinning {
+      animation-play-state: running;
+    }
+
+    .cd-disk::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 18px;
+      height: 18px;
+      background: #000;
+      border: 2px solid #888;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spinCD {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Subtitles Overlay */
+    .subtitles-overlay {
+      position: absolute;
+      bottom: 24px;
+      left: 10px;
+      right: 10px;
+      text-align: center;
+      color: #ffff00;
+      font-size: 14px;
+      font-weight: bold;
+      text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+      z-index: 6;
+      pointer-events: none;
+      min-height: 20px;
+    }
+
+    /* OSD Badge */
+    .osd-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--win-border-light);
+      color: #fff;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .osd-badge.show {
+      opacity: 1;
+    }
+
+    /* Controls Container */
+    .controls-container {
+      padding: 2px 5px 5px 5px;
+    }
+
+    /* Seek Slider & Time Bar */
+    .track-slider-section {
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
+      background: var(--win-bg);
     }
 
+    .time-badge {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      font-weight: bold;
+      background: #000;
+      color: var(--accent-led);
+      padding: 2px 5px;
+      border: 1px solid var(--win-border-dark);
+      border-radius: 2px;
+      min-width: 60px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    /* Windows Range Slider */
     input[type=range] {
       -webkit-appearance: none;
+      appearance: none;
       background: transparent;
       width: 100%;
+      cursor: pointer;
     }
 
     input[type=range]:focus {
@@ -121,218 +470,2339 @@
     }
 
     input[type=range]::-webkit-slider-runnable-track {
-      height: 4px;
-      background: #808080;
-      border: 1px solid #404040;
-      border-top: 1px solid #404040;
-      border-bottom: 1px solid #fff;
+      height: 5px;
+      background: var(--win-border-dark);
+      border: 1px solid;
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
     }
 
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 14px;
-      width: 8px;
-      background: #c0c0c0;
-      border: 1px solid;
-      border-color: #dfdfdf #404040 #404040 #dfdfdf;
-      cursor: pointer;
+      height: 16px;
+      width: 10px;
+      background: var(--win-bg);
+      border: 2px solid;
+      border-color: var(--win-border-light) var(--win-border-darkest) var(--win-border-darkest) var(--win-border-light);
+      box-shadow: inset 1px 1px var(--win-border-mid), inset -1px -1px var(--win-border-dark);
       margin-top: -6px;
     }
 
-    /* Кнопки та регулятор гучності */
+    input[type=range]::-webkit-slider-thumb:active {
+      background: var(--btn-active-bg);
+    }
+
+    /* Buttons Row */
     .buttons-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid;
-      border-color: #808080 #dfdfdf #dfdfdf #808080;
+      border: 2px solid;
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+      box-shadow: inset 1px 1px var(--win-border-mid);
       padding: 4px 6px;
-      background: #d4d0c8;
+      background: var(--win-bg);
+      gap: 4px;
+      flex-wrap: wrap;
     }
 
     .playback-buttons {
       display: flex;
       gap: 3px;
+      align-items: center;
     }
 
-    .playback-buttons button {
-      background: #c0c0c0;
+    .retro-btn {
+      background: var(--win-bg);
       border: 2px solid;
-      border-color: #dfdfdf #404040 #404040 #dfdfdf;
-      width: 28px;
+      border-color: var(--win-border-light) var(--win-border-darkest) var(--win-border-darkest) var(--win-border-light);
+      box-shadow: inset 1px 1px var(--win-border-mid), inset -1px -1px var(--win-border-dark);
+      min-width: 26px;
       height: 24px;
+      padding: 0 5px;
       font-weight: bold;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      color: var(--text-color);
+      gap: 3px;
     }
 
-    .playback-buttons button:active {
-      border-color: #404040 #dfdfdf #dfdfdf #404040;
+    .retro-btn:active, .retro-btn.active-state {
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+      box-shadow: inset 1px 1px var(--win-border-dark);
       padding-top: 2px;
-      padding-left: 2px;
+      padding-left: 6px;
+      background: var(--btn-active-bg);
+    }
+
+    .retro-btn.pressed {
+      background: #a0a0a0;
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+    }
+
+    .retro-btn svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
     }
 
     .volume-group {
       display: flex;
       align-items: center;
       gap: 4px;
-      width: 110px;
+      width: 100px;
     }
 
-    /* Статус-бар */
+    .mute-btn {
+      cursor: pointer;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Extra utility buttons */
+    .extra-tools {
+      display: flex;
+      gap: 3px;
+    }
+
+    /* Status Bar */
     .status-bar {
-      margin-top: 6px;
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 4px;
+    }
+
+    .status-cell {
       border: 1px solid;
-      border-color: #808080 #dfdfdf #dfdfdf #808080;
-      padding: 2px 4px;
+      border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+      padding: 2px 6px;
       font-size: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: var(--win-bg);
+    }
+
+    /* Secondary Windows Styling (Playlist, EQ, etc.) */
+    .tool-header {
       display: flex;
       justify-content: space-between;
-      color: #333;
+      align-items: center;
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--win-border-dark);
+    }
+
+    .tool-body {
+      padding: 6px;
+    }
+
+    /* Playlist Table */
+    .playlist-list {
+      background: #fff;
+      border: 2px solid;
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+      height: 170px;
+      overflow-y: auto;
+      margin-bottom: 6px;
+      padding: 0;
+      list-style: none;
+      font-family: "Courier New", monospace;
+      color: #000;
+    }
+
+    body.theme-dark .playlist-list {
+      background: #111;
+      color: #00ffaa;
+    }
+
+    .playlist-item {
+      padding: 3px 6px;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      border-bottom: 1px dotted #ccc;
+      font-size: 11px;
+    }
+
+    .playlist-item:hover {
+      background: #e8e8e8;
+    }
+
+    body.theme-dark .playlist-item:hover {
+      background: #222;
+    }
+
+    .playlist-item.active {
+      background: #000080;
+      color: #fff !important;
+      font-weight: bold;
+    }
+
+    .playlist-controls {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    /* Equalizer Sliders */
+    .eq-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      height: 120px;
+      background: #000;
+      border: 2px solid;
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+      padding: 8px 4px 4px 4px;
+      margin-bottom: 8px;
+    }
+
+    .eq-band {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      width: 28px;
+    }
+
+    .eq-band input[type=range] {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 6px;
+      height: 85px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .eq-band label {
+      color: var(--accent-led);
+      font-family: monospace;
+      font-size: 8px;
+      margin-top: 4px;
+    }
+
+    .eq-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 6px;
+    }
+
+    select.retro-select {
+      background: #fff;
+      border: 2px solid;
+      border-color: var(--win-border-darkest) var(--win-border-light) var(--win-border-light) var(--win-border-darkest);
+      padding: 2px 4px;
+      font-size: 11px;
+      color: #000;
+    }
+
+    body.theme-dark select.retro-select {
+      background: #222;
+      color: #fff;
+    }
+
+    /* Video Adjustments */
+    .video-effects-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr 40px;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* Modal Dialogs */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .dialog-box {
+      width: 360px;
+      max-width: 90vw;
+    }
+
+    .dialog-content {
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .dialog-icon {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .dialog-text {
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .dialog-buttons {
+      padding: 8px 12px 10px 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    /* Format tags */
+    .format-tag {
+      display: inline-block;
+      background: #000;
+      color: var(--accent-led);
+      padding: 2px 4px;
+      margin: 2px;
+      font-family: monospace;
+      font-size: 9px;
+      border: 1px solid var(--win-border-dark);
+    }
+
+    /* Drag over screen effect */
+    .player-screen-wrapper.drag-over {
+      border: 2px dashed var(--accent-led) !important;
+      box-shadow: 0 0 15px rgba(0,255,100,0.5);
     }
   </style>
 </head>
-<body>
+<body class="theme-98">
 
-<div class="retro-window">
-  <!-- Заголовок -->
-  <div class="title-bar">
-    <span>Windows Media Player</span>
-    <div class="title-buttons">
-      <button>_</button>
-      <button>&#9633;</button>
-      <button>&#10005;</button>
-    </div>
-  </div>
-
-  <!-- Меню -->
-  <div class="menu-bar">
-    <span onclick="openFileDialog()"><u>F</u>ile</span>
-    <span onclick="alert('Windows Media Player v1.0\nClassic Edition')"><u>H</u>elp</span>
-  </div>
-
-  <!-- Прихований input для вибору медіафайлу -->
-  <input type="file" id="fileInput" accept="video/*,audio/*" style="display: none;" onchange="loadMedia(event)">
-
-  <!-- Екран для відео / аудіо -->
-  <div class="player-screen">
-    <video id="mediaPlayer" preload="metadata"></video>
-    <div id="audioLabel" class="audio-visualizer">&#9835; Відтворення аудіо...</div>
-  </div>
-
-  <!-- Панель керування -->
-  <div class="controls-container">
-    <div class="track-slider-container">
-      <input type="range" id="seekSlider" value="0" min="0" step="0.1">
-    </div>
-
-    <div class="buttons-row">
-      <div class="playback-buttons">
-        <button title="Play" onclick="playMedia()">&#9658;</button>
-        <button title="Pause" onclick="pauseMedia()"><b>||</b></button>
-        <button title="Stop" onclick="stopMedia()">&#9632;</button>
-        <button title="Rewind 5s" onclick="seekRelative(-5)">&#9668;&#9668;</button>
-        <button title="Forward 5s" onclick="seekRelative(5)">&#9658;&#9658;</button>
-        <button title="Open File" onclick="openFileDialog()">&#128194;</button>
+<div class="app-workspace">
+  <!-- MAIN WINDOW -->
+  <div class="retro-window main-window" id="mainWindow">
+    <!-- Title Bar -->
+    <div class="title-bar" id="mainTitleBar">
+      <div class="title-bar-left">
+        <svg class="wmp-icon" viewBox="0 0 32 32">
+          <circle cx="16" cy="16" r="14" fill="#ff8c00" stroke="#000" stroke-width="1.5"/>
+          <polygon points="12,9 24,16 12,23" fill="#000080"/>
+          <circle cx="16" cy="16" r="4" fill="#00ffff"/>
+        </svg>
+        <span id="appTitleText">Windows Media Player v2.1 (Build 21)</span>
       </div>
-
-      <div class="volume-group">
-        <span>&#128266;</span>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" oninput="changeVolume(this.value)">
+      <div class="title-buttons">
+        <button onclick="toggleMinimize()" title="Згорнути">_</button>
+        <button onclick="toggleMaximize()" title="Розгорнути">&#9633;</button>
+        <button onclick="closeApp()" title="Закрити">&#10005;</button>
       </div>
     </div>
 
-    <!-- Статус-бар -->
-    <div class="status-bar">
-      <span id="statusText">Готово</span>
-      <span id="timeDisplay">00:00 / 00:00</span>
+    <!-- Menu Bar -->
+    <div class="menu-bar" id="menuBar">
+      <!-- File Menu -->
+      <div class="menu-item" onclick="toggleMenu(event, 'fileMenu')">
+        <u>F</u>ile
+        <div class="dropdown-menu" id="fileMenu">
+          <div class="dropdown-item" onclick="openFileDialog()">
+            <span>&#128194; Відкрити файл(и)...</span>
+            <span class="shortcut-badge">Ctrl+O</span>
+          </div>
+          <div class="dropdown-item" onclick="openUrlDialog()">
+            <span>&#127760; Відкрити URL / Потік...</span>
+            <span class="shortcut-badge">Ctrl+U</span>
+          </div>
+          <div class="dropdown-item" onclick="openSubtitleDialog()">
+            <span>&#128196; Завантажити субтитри (.srt/.vtt)...</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="loadDemoTrack(1)">
+            <span>&#9835; Демо: Retro Synthwave (90s Beat)</span>
+          </div>
+          <div class="dropdown-item" onclick="loadDemoTrack(2)">
+            <span>&#9835; Демо: Chiptune Windows Anthem</span>
+          </div>
+          <div class="dropdown-item" onclick="loadDemoTrack(3)">
+            <span>&#127916; Демо: Відео Трейлер / Тест</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="exportPlaylistM3U()">
+            <span>&#128190; Зберегти плейлист (.m3u)</span>
+          </div>
+          <div class="dropdown-item" onclick="importPlaylistFile()">
+            <span>&#128194; Імпортувати плейлист</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="closeApp()">
+            <span>Вихід</span>
+            <span class="shortcut-badge">Alt+F4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Menu -->
+      <div class="menu-item" onclick="toggleMenu(event, 'viewMenu')">
+        <u>V</u>iew
+        <div class="dropdown-menu" id="viewMenu">
+          <div class="dropdown-item" onclick="toggleWindow('playlistWindow')">
+            <span>&#128220; Плейлист (Playlist Editor)</span>
+            <span class="shortcut-badge">L</span>
+          </div>
+          <div class="dropdown-item" onclick="toggleWindow('eqWindow')">
+            <span>&#127915; Графічний Еквалайзер (10-Band)</span>
+            <span class="shortcut-badge">E</span>
+          </div>
+          <div class="dropdown-item" onclick="toggleWindow('videoFxWindow')">
+            <span>&#127916; Відеоефекти & Колір</span>
+            <span class="shortcut-badge">V</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="cycleVisualizer()">
+            <span>&#128396; Режим візуалізації (Canvas)</span>
+            <span class="shortcut-badge">Tab</span>
+          </div>
+          <div class="dropdown-item" onclick="toggleFullscreen()">
+            <span>&#9974; На весь екран</span>
+            <span class="shortcut-badge">F</span>
+          </div>
+          <div class="dropdown-item" onclick="togglePiP()">
+            <span>&#128250; Картинка в картинці (PiP)</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="setTheme('theme-98')">
+            <span>&#128396; Тема: Classic Windows 98 / 2000</span>
+          </div>
+          <div class="dropdown-item" onclick="setTheme('theme-xp')">
+            <span>&#128396; Тема: Windows XP Luna Blue</span>
+          </div>
+          <div class="dropdown-item" onclick="setTheme('theme-silver')">
+            <span>&#128396; Тема: Windows XP Silver</span>
+          </div>
+          <div class="dropdown-item" onclick="setTheme('theme-dark')">
+            <span>&#128396; Тема: Dark Studio 90s</span>
+          </div>
+          <div class="dropdown-item" onclick="setTheme('theme-me')">
+            <span>&#128396; Тема: Windows Millennium (Me)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Play Menu -->
+      <div class="menu-item" onclick="toggleMenu(event, 'playMenu')">
+        <u>P</u>lay
+        <div class="dropdown-menu" id="playMenu">
+          <div class="dropdown-item" onclick="playMedia()">
+            <span>&#9658; Відтворити</span>
+            <span class="shortcut-badge">Space</span>
+          </div>
+          <div class="dropdown-item" onclick="pauseMedia()">
+            <span><b>||</b> Пауза</span>
+          </div>
+          <div class="dropdown-item" onclick="stopMedia()">
+            <span>&#9632; Зупинити</span>
+            <span class="shortcut-badge">S</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="playPrevTrack()">
+            <span>&#9668;&#9668; Попередній трек</span>
+            <span class="shortcut-badge">P</span>
+          </div>
+          <div class="dropdown-item" onclick="playNextTrack()">
+            <span>&#9658;&#9658; Наступний трек</span>
+            <span class="shortcut-badge">N</span>
+          </div>
+          <div class="dropdown-item" onclick="seekRelative(-5)">
+            <span>&#9664; Назад 5 сек</span>
+            <span class="shortcut-badge">&larr;</span>
+          </div>
+          <div class="dropdown-item" onclick="seekRelative(5)">
+            <span>&#9654; Вперед 5 сек</span>
+            <span class="shortcut-badge">&rarr;</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="cycleRepeatMode()">
+            <span id="menuRepeatText">&#128257; Повтор: Вимкнено</span>
+            <span class="shortcut-badge">R</span>
+          </div>
+          <div class="dropdown-item" onclick="toggleShuffle()">
+            <span id="menuShuffleText">&#128256; Shuffle: Вимкнено</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="setSpeed(0.5)"><span>Швидкість 0.5x (Slow)</span></div>
+          <div class="dropdown-item" onclick="setSpeed(1.0)"><span>Швидкість 1.0x (Normal)</span></div>
+          <div class="dropdown-item" onclick="setSpeed(1.25)"><span>Швидкість 1.25x</span></div>
+          <div class="dropdown-item" onclick="setSpeed(1.5)"><span>Швидкість 1.5x</span></div>
+          <div class="dropdown-item" onclick="setSpeed(2.0)"><span>Швидкість 2.0x (Fast)</span></div>
+        </div>
+      </div>
+
+      <!-- Audio Menu -->
+      <div class="menu-item" onclick="toggleMenu(event, 'audioMenu')">
+        <u>A</u>udio
+        <div class="dropdown-menu" id="audioMenu">
+          <div class="dropdown-item" onclick="toggleMute()">
+            <span>&#128263; Вимкнути/Увімкнути звук</span>
+            <span class="shortcut-badge">M</span>
+          </div>
+          <div class="dropdown-item" onclick="toggleBassBoost()">
+            <span id="menuBassText">&#9889; Bass Boost (Супер Бас): OFF</span>
+          </div>
+          <div class="dropdown-item" onclick="toggle3DSurround()">
+            <span id="menu3DText">&#127911; 3D Spatial Surround: OFF</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="applyEqPreset('rock')"><span>Пресет EQ: Rock</span></div>
+          <div class="dropdown-item" onclick="applyEqPreset('pop')"><span>Пресет EQ: Pop</span></div>
+          <div class="dropdown-item" onclick="applyEqPreset('dance')"><span>Пресет EQ: Dance / Club</span></div>
+          <div class="dropdown-item" onclick="applyEqPreset('flat')"><span>Пресет EQ: Flat (За замовчуванням)</span></div>
+        </div>
+      </div>
+
+      <!-- Help Menu -->
+      <div class="menu-item" onclick="toggleMenu(event, 'helpMenu')">
+        <u>H</u>elp
+        <div class="dropdown-menu" id="helpMenu">
+          <div class="dropdown-item" onclick="openModal('shortcutsModal')">
+            <span>&#9000; Гарячі клавіші (Keyboard Shortcuts)</span>
+          </div>
+          <div class="dropdown-item" onclick="openModal('formatsModal')">
+            <span>&#128191; Підтримувані формати кодеків</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="openModal('aboutModal')">
+            <span>&#8505; Про Windows Media Player v2.1...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden File Inputs -->
+    <input type="file" id="fileInput" multiple accept="audio/*,video/*,.mp3,.wav,.ogg,.oga,.m4a,.aac,.flac,.opus,.weba,.webm,.mp4,.m4v,.ogv,.mkv,.avi,.mov,.m3u,.pls" style="display: none;" onchange="handleFilesSelected(event)">
+    <input type="file" id="subInput" accept=".srt,.vtt,.sub" style="display: none;" onchange="handleSubtitleLoaded(event)">
+    <input type="file" id="playlistInput" accept=".m3u,.pls,.json" style="display: none;" onchange="handlePlaylistFileImport(event)">
+
+    <!-- Player Screen Area -->
+    <div class="player-screen-wrapper" id="playerScreen" onclick="handleScreenClick(event)" ondblclick="toggleFullscreen()">
+      <!-- Screen Top Info -->
+      <div class="screen-overlay-info">
+        <span id="screenCodecInfo">FORMAT: STANDBY</span>
+        <span id="screenVisInfo">VIS: SPECTRUM</span>
+      </div>
+
+      <!-- Video Element -->
+      <video id="mediaPlayer" preload="auto" playsinline></video>
+
+      <!-- Canvas Visualizer -->
+      <canvas id="visCanvas"></canvas>
+
+      <!-- Standby Graphic -->
+      <div class="screen-standby" id="screenStandby">
+        <div class="cd-disk" id="cdDisk"></div>
+        <div>
+          <div style="font-weight: bold; font-size: 13px; color: #fff; text-shadow: 1px 1px 2px #000;">Windows Media Player</div>
+          <div style="font-size: 10px; margin-top: 3px;">Перетягніть файли сюди або оберіть File -> Open</div>
+        </div>
+      </div>
+
+      <!-- Subtitles Display -->
+      <div class="subtitles-overlay" id="subtitlesOverlay"></div>
+
+      <!-- On Screen Display Badge -->
+      <div class="osd-badge" id="osdBadge">Готово</div>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls-container">
+      <!-- Track Seek Slider -->
+      <div class="track-slider-section">
+        <span class="time-badge" id="currentTimeBadge" onclick="toggleTimeRemaining()" title="Клік для перемикання (залишилось/пройдено)">00:00</span>
+        <input type="range" id="seekSlider" value="0" min="0" max="100" step="0.05">
+        <span class="time-badge" id="totalDurationBadge">00:00</span>
+      </div>
+
+      <!-- Buttons Row -->
+      <div class="buttons-row">
+        <!-- Main Playback Buttons -->
+        <div class="playback-buttons">
+          <button class="retro-btn" id="playBtn" title="Відтворення (Space)" onclick="playMedia()">
+            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <button class="retro-btn" id="pauseBtn" title="Пауза" onclick="pauseMedia()">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16"/><rect x="15" y="4" width="4" height="16"/></svg>
+          </button>
+          <button class="retro-btn" id="stopBtn" title="Зупинити (S)" onclick="stopMedia()">
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>
+          </button>
+          <button class="retro-btn" title="Попередній трек (P)" onclick="playPrevTrack()">
+            <svg viewBox="0 0 24 24"><polygon points="12,5 4,12 12,19"/><polygon points="20,5 12,12 20,19"/><rect x="3" y="5" width="2" height="14"/></svg>
+          </button>
+          <button class="retro-btn" title="Назад 5с (Left Arrow)" onclick="seekRelative(-5)">
+            <svg viewBox="0 0 24 24"><polygon points="11,5 2,12 11,19"/><polygon points="20,5 11,12 20,19"/></svg>
+          </button>
+          <button class="retro-btn" title="Вперед 5с (Right Arrow)" onclick="seekRelative(5)">
+            <svg viewBox="0 0 24 24"><polygon points="4,5 13,12 4,19"/><polygon points="13,5 22,12 13,19"/></svg>
+          </button>
+          <button class="retro-btn" title="Наступний трек (N)" onclick="playNextTrack()">
+            <svg viewBox="0 0 24 24"><polygon points="4,5 12,12 4,19"/><polygon points="12,5 20,12 12,19"/><rect x="19" y="5" width="2" height="14"/></svg>
+          </button>
+          <button class="retro-btn" title="Відкрити файл (Ctrl+O)" onclick="openFileDialog()">
+            &#128194;
+          </button>
+        </div>
+
+        <!-- Volume Section -->
+        <div class="volume-group">
+          <span class="mute-btn" id="muteIcon" onclick="toggleMute()" title="Звук">&#128266;</span>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.02" value="0.85" title="Гучність">
+        </div>
+
+        <!-- Extra Tools Toggle -->
+        <div class="extra-tools">
+          <button class="retro-btn" id="repeatBtn" title="Повтор треків (R)" onclick="cycleRepeatMode()">
+            &#128257;
+          </button>
+          <button class="retro-btn" id="shuffleBtn" title="Shuffle (Перемішування)" onclick="toggleShuffle()">
+            &#128256;
+          </button>
+          <button class="retro-btn" id="playlistToggleBtn" title="Плейлист (L)" onclick="toggleWindow('playlistWindow')">
+            PL
+          </button>
+          <button class="retro-btn" id="eqToggleBtn" title="Еквалайзер (E)" onclick="toggleWindow('eqWindow')">
+            EQ
+          </button>
+          <button class="retro-btn" id="videoToggleBtn" title="Відеоефекти (V)" onclick="toggleWindow('videoFxWindow')">
+            FX
+          </button>
+          <button class="retro-btn" title="На весь екран (F)" onclick="toggleFullscreen()">
+            &#9974;
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-cell" id="statusMessage">Готово до відтворення</div>
+        <div class="status-cell" id="statusAudioStats">STEREO 44.1kHz</div>
+        <div class="status-cell" id="statusTrackCounter">0 / 0 Треків</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAYLIST EDITOR WINDOW -->
+  <div class="retro-window tool-window" id="playlistWindow">
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>&#128220; Playlist Editor v2.1</span>
+      </div>
+      <div class="title-buttons">
+        <button onclick="toggleWindow('playlistWindow')">&#10005;</button>
+      </div>
+    </div>
+    <div class="tool-body">
+      <!-- Search inside playlist -->
+      <div style="margin-bottom: 4px; display: flex; gap: 4px;">
+        <input type="text" id="playlistSearch" placeholder="Пошук у плейлисті..." style="flex:1; padding: 2px 4px; border: 1px solid var(--win-border-dark);" oninput="filterPlaylist(this.value)">
+      </div>
+      
+      <ul class="playlist-list" id="playlistItems">
+        <!-- Dynamic Items -->
+      </ul>
+
+      <div class="playlist-controls">
+        <div style="display:flex; gap: 2px;">
+          <button class="retro-btn" onclick="openFileDialog()" title="Додати файли">+ Файл</button>
+          <button class="retro-btn" onclick="openUrlDialog()" title="Додати URL">+ URL</button>
+          <button class="retro-btn" onclick="removeSelectedTrack()" title="Видалити обраний">- Видалити</button>
+          <button class="retro-btn" onclick="clearPlaylist()" title="Очистити все">&#128465; Очистити</button>
+        </div>
+        <div style="display:flex; gap: 2px;">
+          <button class="retro-btn" onclick="moveTrackUp()" title="Вгору">&#9650;</button>
+          <button class="retro-btn" onclick="moveTrackDown()" title="Вниз">&#9660;</button>
+          <button class="retro-btn" onclick="exportPlaylistM3U()" title="Зберегти M3U">&#128190; Зберегти</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10-BAND GRAPHIC EQUALIZER WINDOW -->
+  <div class="retro-window tool-window" id="eqWindow">
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>&#127915; Graphic Equalizer & Sound FX</span>
+      </div>
+      <div class="title-buttons">
+        <button onclick="toggleWindow('eqWindow')">&#10005;</button>
+      </div>
+    </div>
+    <div class="tool-body">
+      <div class="eq-row">
+        <label><input type="checkbox" id="eqEnableCheck" checked onchange="toggleEqEnabled(this.checked)"> Увімкнено (ON)</label>
+        <div>
+          <span>Пресет: </span>
+          <select class="retro-select" id="eqPresetSelect" onchange="applyEqPreset(this.value)">
+            <option value="flat">Flat (За замовчуванням)</option>
+            <option value="rock">Rock / Metal</option>
+            <option value="pop">Pop Music</option>
+            <option value="dance">Dance / Club</option>
+            <option value="techno">Techno / Electronic</option>
+            <option value="jazz">Jazz / Blues</option>
+            <option value="classical">Classical</option>
+            <option value="vocal">Vocal Booster</option>
+            <option value="bass">Mega Bass</option>
+            <option value="treble">Treble Booster</option>
+            <option value="synthwave">90s Synthwave</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 10 Sliders -->
+      <div class="eq-container" id="eqContainer">
+        <!-- 32Hz, 64Hz, 125Hz, 250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz, 16kHz -->
+      </div>
+
+      <!-- Sound Enhancements -->
+      <div style="border-top: 1px solid var(--win-border-dark); padding-top: 6px; margin-top: 6px;">
+        <div class="eq-row">
+          <label><input type="checkbox" id="bassBoostCheck" onchange="toggleBassBoost()"> Bass Boost (Підсилення НЧ)</label>
+          <input type="range" id="bassBoostSlider" min="0" max="15" value="6" style="width: 80px;" oninput="updateBassBoostGain(this.value)">
+        </div>
+        <div class="eq-row">
+          <label><input type="checkbox" id="surroundCheck" onchange="toggle3DSurround()"> 3D Spatial Surround</label>
+          <label><input type="checkbox" id="pitchPreserveCheck" checked onchange="togglePreservePitch(this.checked)"> Зберігати тональність при швидкості</label>
+        </div>
+        <div class="eq-row">
+          <span>Стереобаланс (Pan):</span>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span>L</span>
+            <input type="range" id="panSlider" min="-1" max="1" step="0.05" value="0" style="width: 80px;" oninput="setStereoPan(this.value)">
+            <span>R</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO EFFECTS & COLOR ADJUSTMENTS WINDOW -->
+  <div class="retro-window tool-window" id="videoFxWindow">
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>&#127916; Video Color & Tools</span>
+      </div>
+      <div class="title-buttons">
+        <button onclick="toggleWindow('videoFxWindow')">&#10005;</button>
+      </div>
+    </div>
+    <div class="tool-body">
+      <div class="video-effects-grid">
+        <label>Яскравість:</label>
+        <input type="range" id="vfxBrightness" min="50" max="150" value="100" oninput="updateVideoFilters()">
+        <span id="valBrightness">100%</span>
+
+        <label>Контраст:</label>
+        <input type="range" id="vfxContrast" min="50" max="200" value="100" oninput="updateVideoFilters()">
+        <span id="valContrast">100%</span>
+
+        <label>Насиченість:</label>
+        <input type="range" id="vfxSaturate" min="0" max="250" value="100" oninput="updateVideoFilters()">
+        <span id="valSaturate">100%</span>
+
+        <label>Відтінок (Hue):</label>
+        <input type="range" id="vfxHue" min="0" max="360" value="0" oninput="updateVideoFilters()">
+        <span id="valHue">0°</span>
+
+        <label>Співвідношення:</label>
+        <select class="retro-select" id="aspectRatioSelect" onchange="setAspectRatio(this.value)">
+          <option value="contain">Авто (Contain)</option>
+          <option value="16/9">16 : 9 Widescreen</option>
+          <option value="4/3">4 : 3 Classic TV</option>
+          <option value="fill">Розтягнути (Fill / Stretch)</option>
+        </select>
+        <span></span>
+      </div>
+
+      <div style="display:flex; justify-content: space-between; gap: 4px; margin-top: 6px; border-top: 1px solid var(--win-border-dark); padding-top: 6px;">
+        <button class="retro-btn" onclick="stepFrame(-1)" title="Попередній кадр">&#9664; Кадр</button>
+        <button class="retro-btn" onclick="stepFrame(1)" title="Наступний кадр">Кадр &#9654;</button>
+        <button class="retro-btn" onclick="captureSnapshot()" title="Зробити знімок кадру">&#128247; Знімок кадру</button>
+        <button class="retro-btn" onclick="resetVideoFilters()">Скинути</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- ABOUT MODAL -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="retro-window dialog-box">
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>Про Windows Media Player</span>
+      </div>
+      <div class="title-buttons">
+        <button onclick="closeModal('aboutModal')">&#10005;</button>
+      </div>
+    </div>
+    <div class="dialog-content">
+      <svg class="dialog-icon" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="14" fill="#ff8c00" stroke="#000" stroke-width="1.5"/>
+        <polygon points="12,9 24,16 12,23" fill="#000080"/>
+        <circle cx="16" cy="16" r="4" fill="#00ffff"/>
+      </svg>
+      <div class="dialog-text">
+        <strong style="font-size: 12px;">Windows Media Player</strong><br>
+        <strong>Версія:</strong> 2.1 (Build 21.0.2026)<br>
+        <strong>Редакція:</strong> Multimedia Deluxe Edition<br>
+        <div style="height: 1px; background: var(--win-border-dark); margin: 6px 0;"></div>
+        Підтримка Web Audio 10-Band EQ, 6 Canvas візуалізацій, відеофільтрів, потокового URL та багатоканального декодування.<br>
+        <span style="font-size: 10px; color: #555;">(C) 1992-2026 Microsoft Corp. та спільнота ретро-софту. Усі права захищено.</span>
+      </div>
+    </div>
+    <div class="dialog-buttons">
+      <button class="retro-btn" style="min-width: 70px;" onclick="closeModal('aboutModal')">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- OPEN URL MODAL -->
+<div class="modal-overlay" id="urlModal">
+  <div class="retro-window dialog-box" style="width: 420px;">
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>Відкрити мережевий потік / URL</span>
+      </div>
+      <div class="title-buttons">
+        <button onclick="closeModal('urlModal')">&#10005;</button>
+      </div>
+    </div>
+    <div class="tool-body" style="padding: 10px;">
+      <p style="margin: 0 0 6px 0;">Введіть URL адресу аудіо/відео або радіопотоку:</p>
+      <input type="text" id="streamUrlInput" placeholder="https://example.com/stream.mp3" style="width: 100%; padding: 4px; border: 1px solid var(--win-border-dark); margin-bottom: 8px;">
+      
+      <div style="font-size: 10px; margin-bottom: 8px;">
+        <strong>Швидкі станції / Демо:</strong><br>
+        <a href="#" onclick="setStreamPreset('https://icecast.vrt.be/stubru-high.mp3', 'Studio Brussel Radio')" style="color: #000080;">Studio Brussel (MP3 Radio)</a> | 
+        <a href="#" onclick="setStreamPreset('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', 'Big Buck Bunny 720p HD')" style="color: #000080;">Big Buck Bunny Video</a>
+      </div>
+
+      <div class="dialog-buttons" style="padding: 0;">
+        <button class="retro-btn" style="min-width: 70px;" onclick="submitStreamUrl()">Відкрити</button>
+        <button class="retro-btn" style="min-width: 70px;" onclick="closeModal('urlModal')">Скасувати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KEYBOARD SHORTCUTS MODAL -->
+<div class="modal-overlay" id="shortcutsModal">
+  <div class="retro-window dialog-box" style="width: 440px;">
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>Гарячі клавіші (Keyboard Shortcuts)</span>
+      </div>
+      <div class="title-buttons">
+        <button onclick="closeModal('shortcutsModal')">&#10005;</button>
+      </div>
+    </div>
+    <div class="tool-body" style="padding: 10px; max-height: 320px; overflow-y: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+        <tr style="border-bottom: 1px solid #999; font-weight: bold;">
+          <td style="padding: 3px;">Клавіша</td>
+          <td style="padding: 3px;">Дія</td>
+        </tr>
+        <tr><td><span class="format-tag">Пробіл (Space)</span></td><td>Відтворення / Пауза</td></tr>
+        <tr><td><span class="format-tag">S</span></td><td>Зупинити відтворення</td></tr>
+        <tr><td><span class="format-tag">&larr; / &rarr;</span></td><td>Перемотування на 5 секунд</td></tr>
+        <tr><td><span class="format-tag">&uarr; / &darr;</span></td><td>Зміна гучності (+5% / -5%)</td></tr>
+        <tr><td><span class="format-tag">M</span></td><td>Вимкнути / увімкнути звук (Mute)</td></tr>
+        <tr><td><span class="format-tag">F</span></td><td>Повноекранний режим</td></tr>
+        <tr><td><span class="format-tag">N / P</span></td><td>Наступний / Попередній трек</td></tr>
+        <tr><td><span class="format-tag">L</span></td><td>Відкрити / сховати Плейлист</td></tr>
+        <tr><td><span class="format-tag">E</span></td><td>Відкрити / сховати Еквалайзер</td></tr>
+        <tr><td><span class="format-tag">V</span></td><td>Відкрити / сховати Відеоефекти</td></tr>
+        <tr><td><span class="format-tag">Tab</span></td><td>Зміна режиму візуалізатора</td></tr>
+        <tr><td><span class="format-tag">R</span></td><td>Режим повтору (Repeat)</td></tr>
+        <tr><td><span class="format-tag">Ctrl + O</span></td><td>Відкрити файл(и)</td></tr>
+        <tr><td><span class="format-tag">Ctrl + U</span></td><td>Відкрити мережевий URL</td></tr>
+      </table>
+    </div>
+    <div class="dialog-buttons">
+      <button class="retro-btn" style="min-width: 70px;" onclick="closeModal('shortcutsModal')">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORMATS MODAL -->
+<div class="modal-overlay" id="formatsModal">
+  <div class="retro-window dialog-box" style="width: 450px;">
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <span>Підтримувані формати (v2.1 Build 21)</span>
+      </div>
+      <div class="title-buttons">
+        <button onclick="closeModal('formatsModal')">&#10005;</button>
+      </div>
+    </div>
+    <div class="tool-body" style="padding: 10px; max-height: 320px; overflow-y: auto;">
+      <p style="margin-top: 0;"><strong>Аудіо формати:</strong></p>
+      <div>
+        <span class="format-tag">MP3</span>
+        <span class="format-tag">WAV (PCM)</span>
+        <span class="format-tag">FLAC</span>
+        <span class="format-tag">OGG / OGA</span>
+        <span class="format-tag">AAC</span>
+        <span class="format-tag">M4A</span>
+        <span class="format-tag">OPUS</span>
+        <span class="format-tag">WEBM Audio</span>
+        <span class="format-tag">WebAudio Chiptune</span>
+      </div>
+
+      <p><strong>Відео формати & Кодеки:</strong></p>
+      <div>
+        <span class="format-tag">MP4 (H.264/AVC)</span>
+        <span class="format-tag">WEBM (VP8/VP9/AV1)</span>
+        <span class="format-tag">OGV (Theora)</span>
+        <span class="format-tag">MKV / Matroska</span>
+        <span class="format-tag">MOV (QuickTime)</span>
+        <span class="format-tag">AVI (Браузерні кодеки)</span>
+      </div>
+
+      <p><strong>Плейлисти та Субтитри:</strong></p>
+      <div>
+        <span class="format-tag">.M3U / .M3U8</span>
+        <span class="format-tag">.PLS</span>
+        <span class="format-tag">.SRT (SubRip)</span>
+        <span class="format-tag">.VTT (WebVTT)</span>
+      </div>
+    </div>
+    <div class="dialog-buttons">
+      <button class="retro-btn" style="min-width: 70px;" onclick="closeModal('formatsModal')">OK</button>
     </div>
   </div>
 </div>
 
 <script>
+  /* ==========================================================================
+     WINDOWS MEDIA PLAYER v2.1 (BUILD 21) - CORE ENGINE
+     ========================================================================== */
+
+  // State Management
+  const state = {
+    playlist: [],
+    currentIndex: -1,
+    isPlaying: false,
+    isMuted: false,
+    previousVolume: 0.85,
+    repeatMode: 0, // 0: off, 1: repeat-all, 2: repeat-one
+    isShuffle: false,
+    showRemainingTime: false,
+    visMode: 0, // 0: Spectrum Bars, 1: Oscilloscope Wave, 2: Dual VU Meters, 3: Laser Stars, 4: Matrix Rain, 5: Sonic Ring
+    visModesNames: ['SPECTRUM BARS', 'OSCILLOSCOPE', 'STEREO VU METERS', 'LASER STARS', 'MATRIX CYBER', 'SONIC RING'],
+    subtitles: [], // Array of { start, end, text }
+    audioCtx: null,
+    audioSource: null,
+    analyser: null,
+    biquadFilters: [],
+    bassBoostFilter: null,
+    stereoPanner: null,
+    gainNode: null,
+    isWebAudioInit: false,
+    eqBands: [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000],
+    eqGains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    eqEnabled: true,
+    bassBoostActive: false,
+    surroundActive: false,
+    synthInterval: null,
+    isSynthPlaying: false
+  };
+
+  // DOM Elements
   const player = document.getElementById('mediaPlayer');
   const fileInput = document.getElementById('fileInput');
+  const subInput = document.getElementById('subInput');
+  const playlistInput = document.getElementById('playlistInput');
   const seekSlider = document.getElementById('seekSlider');
   const volumeSlider = document.getElementById('volumeSlider');
-  const statusText = document.getElementById('statusText');
-  const timeDisplay = document.getElementById('timeDisplay');
-  const audioLabel = document.getElementById('audioLabel');
+  const muteIcon = document.getElementById('muteIcon');
+  const currentTimeBadge = document.getElementById('currentTimeBadge');
+  const totalDurationBadge = document.getElementById('totalDurationBadge');
+  const statusMessage = document.getElementById('statusMessage');
+  const statusAudioStats = document.getElementById('statusAudioStats');
+  const statusTrackCounter = document.getElementById('statusTrackCounter');
+  const screenCodecInfo = document.getElementById('screenCodecInfo');
+  const screenVisInfo = document.getElementById('screenVisInfo');
+  const screenStandby = document.getElementById('screenStandby');
+  const cdDisk = document.getElementById('cdDisk');
+  const osdBadge = document.getElementById('osdBadge');
+  const subtitlesOverlay = document.getElementById('subtitlesOverlay');
+  const visCanvas = document.getElementById('visCanvas');
+  const canvasCtx = visCanvas.getContext('2d');
+  const playlistItemsUl = document.getElementById('playlistItems');
+  const eqContainer = document.getElementById('eqContainer');
+  const playBtn = document.getElementById('playBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const repeatBtn = document.getElementById('repeatBtn');
+  const shuffleBtn = document.getElementById('shuffleBtn');
 
-  function openFileDialog() {
-    fileInput.click();
+  /* ==========================================================================
+     INITIALIZATION & EQ SETUP
+     ========================================================================== */
+  window.addEventListener('DOMContentLoaded', () => {
+    buildEqUi();
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    setupDragAndDrop();
+    setupKeyboardShortcuts();
+    updateTrackCounter();
+    startVisualizerLoop();
+
+    // Auto-load built-in demo track to start immediately
+    loadDemoTrack(1, false);
+  });
+
+  // UI Sound Synthesis (Retro Windows Click / Beep)
+  function playUiBeep(freq = 800, type = 'sine', duration = 0.04) {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
   }
 
-  function loadMedia(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+  function resizeCanvas() {
+    visCanvas.width = visCanvas.parentElement.clientWidth;
+    visCanvas.height = visCanvas.parentElement.clientHeight;
+  }
 
-    const url = URL.createObjectURL(file);
-    player.src = url;
-    statusText.innerText = "Файл: " + file.name;
+  function showOsd(text) {
+    osdBadge.innerText = text;
+    osdBadge.classList.add('show');
+    clearTimeout(osdBadge._timeout);
+    osdBadge._timeout = setTimeout(() => {
+      osdBadge.classList.remove('show');
+    }, 1500);
+  }
 
-    if (file.type.startsWith('audio/')) {
-      audioLabel.style.display = 'block';
-    } else {
-      audioLabel.style.display = 'none';
+  /* ==========================================================================
+     WEB AUDIO API GRAPH (10-BAND EQ + SPATIAL + ANALYSER)
+     ========================================================================== */
+  function getAudioContext() {
+    if (!state.audioCtx) {
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtxClass) {
+        state.audioCtx = new AudioCtxClass();
+      }
+    }
+    if (state.audioCtx && state.audioCtx.state === 'suspended') {
+      state.audioCtx.resume();
+    }
+    return state.audioCtx;
+  }
+
+  function initWebAudio() {
+    if (state.isWebAudioInit) return;
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      state.audioSource = ctx.createMediaElementSource(player);
+      state.analyser = ctx.createAnalyser();
+      state.analyser.fftSize = 512;
+      state.analyser.smoothingTimeConstant = 0.8;
+
+      // Create 10 Biquad Filter Nodes for EQ
+      state.biquadFilters = state.eqBands.map((freq, index) => {
+        const filter = ctx.createBiquadFilter();
+        if (index === 0) {
+          filter.type = 'lowshelf';
+        } else if (index === state.eqBands.length - 1) {
+          filter.type = 'highshelf';
+        } else {
+          filter.type = 'peaking';
+          filter.Q.value = 1.4;
+        }
+        filter.frequency.value = freq;
+        filter.gain.value = state.eqGains[index] || 0;
+        return filter;
+      });
+
+      // Bass Boost Filter
+      state.bassBoostFilter = ctx.createBiquadFilter();
+      state.bassBoostFilter.type = 'lowshelf';
+      state.bassBoostFilter.frequency.value = 90;
+      state.bassBoostFilter.gain.value = state.bassBoostActive ? 8 : 0;
+
+      // Stereo Panner
+      if (ctx.createStereoPanner) {
+        state.stereoPanner = ctx.createStereoPanner();
+        state.stereoPanner.pan.value = 0;
+      }
+
+      // Master Gain Node
+      state.gainNode = ctx.createGain();
+
+      // Connect Chain: source -> filters[0..9] -> bassBoost -> panner -> analyser -> destination
+      let current = state.audioSource;
+      state.biquadFilters.forEach(filter => {
+        current.connect(filter);
+        current = filter;
+      });
+
+      current.connect(state.bassBoostFilter);
+      current = state.bassBoostFilter;
+
+      if (state.stereoPanner) {
+        current.connect(state.stereoPanner);
+        current = state.stereoPanner;
+      }
+
+      current.connect(state.gainNode);
+      state.gainNode.connect(state.analyser);
+      state.analyser.connect(ctx.destination);
+
+      state.isWebAudioInit = true;
+      statusAudioStats.innerText = `STEREO ${ctx.sampleRate / 1000}kHz 24-bit`;
+    } catch (err) {
+      console.warn("Web Audio API init warning (CORS or direct route):", err);
     }
   }
 
+  function buildEqUi() {
+    eqContainer.innerHTML = '';
+    const labels = ['32', '64', '125', '250', '500', '1k', '2k', '4k', '8k', '16k'];
+    state.eqBands.forEach((band, idx) => {
+      const bandDiv = document.createElement('div');
+      bandDiv.className = 'eq-band';
+      bandDiv.innerHTML = `
+        <input type="range" min="-12" max="12" step="0.5" value="${state.eqGains[idx]}" data-index="${idx}" oninput="handleEqChange(${idx}, this.value)">
+        <label>${labels[idx]}</label>
+      `;
+      eqContainer.appendChild(bandDiv);
+    });
+  }
+
+  function handleEqChange(index, gain) {
+    state.eqGains[index] = parseFloat(gain);
+    if (state.biquadFilters[index] && state.eqEnabled) {
+      state.biquadFilters[index].gain.value = state.eqGains[index];
+    }
+    document.getElementById('eqPresetSelect').value = 'custom';
+  }
+
+  function toggleEqEnabled(enabled) {
+    state.eqEnabled = enabled;
+    state.biquadFilters.forEach((filter, idx) => {
+      filter.gain.value = enabled ? state.eqGains[idx] : 0;
+    });
+    showOsd(`Equalizer: ${enabled ? 'ON' : 'OFF'}`);
+  }
+
+  function applyEqPreset(presetKey) {
+    const presets = {
+      flat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      rock: [5, 4, 3, 1, -1, -1, 1, 3, 4, 5],
+      pop: [-1, 2, 4, 5, 4, 1, -1, -1, 1, 2],
+      dance: [7, 6, 3, 0, 0, 2, 4, 5, 5, 3],
+      techno: [6, 5, 1, 0, -1, 0, 2, 4, 5, 4],
+      jazz: [4, 3, 1, 2, -1, -1, 0, 2, 3, 4],
+      classical: [5, 4, 3, 2, -1, -1, 0, 2, 3, 4],
+      vocal: [-2, -3, -1, 2, 5, 5, 3, 1, -1, -2],
+      bass: [9, 8, 6, 4, 2, 0, 0, 0, 0, 0],
+      treble: [-4, -3, -2, 0, 1, 3, 6, 8, 9, 9],
+      synthwave: [6, 5, 3, 1, 0, 2, 3, 5, 6, 7]
+    };
+
+    if (!presets[presetKey]) return;
+    const values = presets[presetKey];
+    state.eqGains = [...values];
+
+    const inputs = eqContainer.querySelectorAll('input[type=range]');
+    inputs.forEach((input, i) => {
+      input.value = values[i];
+      if (state.biquadFilters[i] && state.eqEnabled) {
+        state.biquadFilters[i].gain.value = values[i];
+      }
+    });
+    document.getElementById('eqPresetSelect').value = presetKey;
+    showOsd(`EQ Preset: ${presetKey.toUpperCase()}`);
+    playUiBeep(600, 'sine', 0.03);
+  }
+
+  function toggleBassBoost() {
+    state.bassBoostActive = !state.bassBoostActive;
+    const sliderVal = parseFloat(document.getElementById('bassBoostSlider').value) || 6;
+    if (state.bassBoostFilter) {
+      state.bassBoostFilter.gain.value = state.bassBoostActive ? sliderVal : 0;
+    }
+    document.getElementById('bassBoostCheck').checked = state.bassBoostActive;
+    document.getElementById('menuBassText').innerText = `⚡ Bass Boost: ${state.bassBoostActive ? 'ON' : 'OFF'}`;
+    showOsd(`Bass Boost: ${state.bassBoostActive ? 'ON' : 'OFF'}`);
+    playUiBeep(state.bassBoostActive ? 300 : 200, 'triangle', 0.05);
+  }
+
+  function updateBassBoostGain(val) {
+    if (state.bassBoostFilter && state.bassBoostActive) {
+      state.bassBoostFilter.gain.value = parseFloat(val);
+    }
+  }
+
+  function toggle3DSurround() {
+    state.surroundActive = !state.surroundActive;
+    document.getElementById('surroundCheck').checked = state.surroundActive;
+    document.getElementById('menu3DText').innerText = `🎧 3D Spatial Surround: ${state.surroundActive ? 'ON' : 'OFF'}`;
+    showOsd(`3D Spatial Surround: ${state.surroundActive ? 'ON' : 'OFF'}`);
+  }
+
+  function setStereoPan(val) {
+    if (state.stereoPanner) {
+      state.stereoPanner.pan.value = parseFloat(val);
+    }
+  }
+
+  function togglePreservePitch(enabled) {
+    player.preservesPitch = enabled;
+  }
+
+  /* ==========================================================================
+     PLAYBACK & MEDIA CONTROL
+     ========================================================================== */
   function playMedia() {
+    getAudioContext();
+    initWebAudio();
+
+    if (state.isSynthPlaying) {
+      resumeSynth();
+      setPlayingState(true);
+      return;
+    }
+
+    if (!player.src && state.playlist.length > 0) {
+      playTrackIndex(state.currentIndex >= 0 ? state.currentIndex : 0);
+      return;
+    }
+
     if (!player.src) {
       openFileDialog();
       return;
     }
-    player.play();
-    statusText.innerText = "Відтворення";
+
+    player.play().then(() => {
+      setPlayingState(true);
+    }).catch(err => {
+      console.log("Playback start error:", err);
+    });
   }
 
   function pauseMedia() {
+    if (state.isSynthPlaying) {
+      pauseSynth();
+      setPlayingState(false);
+      return;
+    }
     player.pause();
-    statusText.innerText = "Пауза";
+    setPlayingState(false);
   }
 
   function stopMedia() {
+    if (state.isSynthPlaying) {
+      stopSynth();
+      setPlayingState(false);
+      return;
+    }
     player.pause();
     player.currentTime = 0;
-    statusText.innerText = "Зупинено";
+    setPlayingState(false);
+    seekSlider.value = 0;
+    currentTimeBadge.innerText = "00:00";
+    statusMessage.innerText = "Зупинено";
+    cdDisk.classList.remove('spinning');
+  }
+
+  function setPlayingState(playing) {
+    state.isPlaying = playing;
+    if (playing) {
+      playBtn.classList.add('active-state');
+      pauseBtn.classList.remove('active-state');
+      cdDisk.classList.add('spinning');
+      statusMessage.innerText = "Відтворення";
+    } else {
+      playBtn.classList.remove('active-state');
+      pauseBtn.classList.add('active-state');
+      cdDisk.classList.remove('spinning');
+      statusMessage.innerText = "Пауза";
+    }
   }
 
   function seekRelative(seconds) {
-    player.currentTime = Math.max(0, Math.min(player.duration || 0, player.currentTime + seconds));
+    if (state.isSynthPlaying) return;
+    if (player.duration) {
+      player.currentTime = Math.max(0, Math.min(player.duration, player.currentTime + seconds));
+      showOsd(`${seconds > 0 ? '+' : ''}${seconds}s`);
+    }
   }
 
-  function changeVolume(val) {
+  function setSpeed(rate) {
+    player.playbackRate = rate;
+    showOsd(`Speed: ${rate}x`);
+  }
+
+  function toggleMute() {
+    initWebAudio();
+    if (player.muted || state.isMuted) {
+      player.muted = false;
+      state.isMuted = false;
+      player.volume = state.previousVolume;
+      volumeSlider.value = state.previousVolume;
+      muteIcon.innerHTML = '&#128266;';
+      showOsd(`Гучність: ${Math.round(state.previousVolume * 100)}%`);
+    } else {
+      state.previousVolume = player.volume;
+      player.muted = true;
+      state.isMuted = true;
+      volumeSlider.value = 0;
+      muteIcon.innerHTML = '&#128263;';
+      showOsd("Звук вимкнено (Mute)");
+    }
+  }
+
+  volumeSlider.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
     player.volume = val;
+    state.previousVolume = val;
+    if (val === 0) {
+      player.muted = true;
+      state.isMuted = true;
+      muteIcon.innerHTML = '&#128263;';
+    } else {
+      player.muted = false;
+      state.isMuted = false;
+      muteIcon.innerHTML = val > 0.5 ? '&#128266;' : '&#128265;';
+    }
+  });
+
+  function cycleRepeatMode() {
+    state.repeatMode = (state.repeatMode + 1) % 3;
+    const modeNames = ['Повтор: Вимкнено', 'Повтор: Весь плейлист', 'Повтор: 1 Трек'];
+    repeatBtn.innerHTML = state.repeatMode === 2 ? '&#128257;₁' : '&#128257;';
+    repeatBtn.classList.toggle('pressed', state.repeatMode > 0);
+    document.getElementById('menuRepeatText').innerText = `🔁 ${modeNames[state.repeatMode]}`;
+    showOsd(modeNames[state.repeatMode]);
+  }
+
+  function toggleShuffle() {
+    state.isShuffle = !state.isShuffle;
+    shuffleBtn.classList.toggle('pressed', state.isShuffle);
+    document.getElementById('menuShuffleText').innerText = `🔀 Shuffle: ${state.isShuffle ? 'Увімкнено' : 'Вимкнено'}`;
+    showOsd(`Shuffle: ${state.isShuffle ? 'ON' : 'OFF'}`);
+  }
+
+  function toggleTimeRemaining() {
+    state.showRemainingTime = !state.showRemainingTime;
+    updateTimeDisplay();
   }
 
   function formatTime(sec) {
-    if (isNaN(sec)) return "00:00";
-    const m = Math.floor(sec / 60);
+    if (isNaN(sec) || !isFinite(sec)) return "00:00";
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
     const s = Math.floor(sec % 60);
+    if (h > 0) {
+      return `${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+    }
     return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
   }
 
-  // Оновлення таймлайну
-  player.addEventListener('loadedmetadata', () => {
-    seekSlider.max = player.duration;
-    timeDisplay.innerText = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+  function updateTimeDisplay() {
+    if (state.isSynthPlaying) return;
+    const curr = player.currentTime || 0;
+    const dur = player.duration || 0;
+    if (state.showRemainingTime && dur > 0) {
+      const rem = dur - curr;
+      currentTimeBadge.innerText = `-${formatTime(rem)}`;
+    } else {
+      currentTimeBadge.innerText = formatTime(curr);
+    }
+    totalDurationBadge.innerText = formatTime(dur);
+  }
+
+  // Seek slider event binding
+  seekSlider.addEventListener('input', () => {
+    if (player.duration) {
+      player.currentTime = (seekSlider.value / 100) * player.duration;
+      updateTimeDisplay();
+    }
   });
 
   player.addEventListener('timeupdate', () => {
-    seekSlider.value = player.currentTime;
-    timeDisplay.innerText = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+    if (player.duration) {
+      seekSlider.value = (player.currentTime / player.duration) * 100;
+    }
+    updateTimeDisplay();
+    updateSubtitlesDisplay(player.currentTime);
+  });
+
+  player.addEventListener('loadedmetadata', () => {
+    updateTimeDisplay();
+    detectMediaKind();
   });
 
   player.addEventListener('ended', () => {
-    statusText.innerText = "Завершено";
+    if (state.repeatMode === 2) {
+      // Repeat current track
+      player.currentTime = 0;
+      player.play();
+    } else {
+      playNextTrack(true);
+    }
   });
 
-  seekSlider.addEventListener('input', () => {
-    player.currentTime = seekSlider.value;
+  function detectMediaKind() {
+    const isVideo = player.videoWidth > 0 && player.videoHeight > 0;
+    if (isVideo) {
+      player.classList.add('active');
+      screenStandby.style.display = 'none';
+      screenCodecInfo.innerText = `VIDEO: ${player.videoWidth}x${player.videoHeight}`;
+    } else {
+      player.classList.remove('active');
+      screenStandby.style.display = 'flex';
+      screenCodecInfo.innerText = "AUDIO: STEREO DECODE";
+    }
+  }
+
+  /* ==========================================================================
+     PLAYLIST MANAGEMENT
+     ========================================================================== */
+  function addTrackToPlaylist(track, autoPlay = true) {
+    state.playlist.push(track);
+    renderPlaylist();
+    updateTrackCounter();
+    if (autoPlay && state.playlist.length === 1) {
+      playTrackIndex(0);
+    }
+  }
+
+  function playTrackIndex(index) {
+    if (index < 0 || index >= state.playlist.length) return;
+    stopSynth();
+
+    state.currentIndex = index;
+    const track = state.playlist[index];
+    renderPlaylist();
+
+    document.getElementById('appTitleText').innerText = `${track.name} - Windows Media Player v2.1`;
+    statusMessage.innerText = `Файл: ${track.name}`;
+
+    if (track.isSynth) {
+      startSynthDemo(track.synthId);
+      return;
+    }
+
+    player.src = track.url;
+    getAudioContext();
+    initWebAudio();
+
+    player.play().then(() => {
+      setPlayingState(true);
+    }).catch(err => {
+      console.warn("Auto-play interrupted:", err);
+      setPlayingState(false);
+    });
+  }
+
+  function playNextTrack(isAutoNext = false) {
+    if (state.playlist.length === 0) return;
+    if (state.isShuffle) {
+      const nextIdx = Math.floor(Math.random() * state.playlist.length);
+      playTrackIndex(nextIdx);
+      return;
+    }
+
+    if (state.currentIndex < state.playlist.length - 1) {
+      playTrackIndex(state.currentIndex + 1);
+    } else if (state.repeatMode === 1 || !isAutoNext) {
+      playTrackIndex(0);
+    } else {
+      stopMedia();
+      statusMessage.innerText = "Плейлист завершено";
+    }
+  }
+
+  function playPrevTrack() {
+    if (state.playlist.length === 0) return;
+    if (player.currentTime > 3) {
+      player.currentTime = 0;
+      return;
+    }
+    if (state.currentIndex > 0) {
+      playTrackIndex(state.currentIndex - 1);
+    } else {
+      playTrackIndex(state.playlist.length - 1);
+    }
+  }
+
+  function renderPlaylist(filterQuery = '') {
+    playlistItemsUl.innerHTML = '';
+    state.playlist.forEach((track, idx) => {
+      if (filterQuery && !track.name.toLowerCase().includes(filterQuery.toLowerCase())) {
+        return;
+      }
+      const li = document.createElement('li');
+      li.className = `playlist-item ${idx === state.currentIndex ? 'active' : ''}`;
+      li.innerHTML = `
+        <span>${idx + 1}. ${escapeHtml(track.name)}</span>
+        <span>${track.durationStr || '--:--'}</span>
+      `;
+      li.onclick = () => playTrackIndex(idx);
+      playlistItemsUl.appendChild(li);
+    });
+  }
+
+  function filterPlaylist(q) {
+    renderPlaylist(q);
+  }
+
+  function updateTrackCounter() {
+    statusTrackCounter.innerText = `${state.currentIndex >= 0 ? state.currentIndex + 1 : 0} / ${state.playlist.length} Треків`;
+  }
+
+  function removeSelectedTrack() {
+    if (state.currentIndex >= 0 && state.currentIndex < state.playlist.length) {
+      state.playlist.splice(state.currentIndex, 1);
+      if (state.currentIndex >= state.playlist.length) {
+        state.currentIndex = state.playlist.length - 1;
+      }
+      renderPlaylist();
+      updateTrackCounter();
+      if (state.playlist.length > 0 && state.currentIndex >= 0) {
+        playTrackIndex(state.currentIndex);
+      } else {
+        stopMedia();
+        player.src = '';
+      }
+    }
+  }
+
+  function clearPlaylist() {
+    stopMedia();
+    player.src = '';
+    state.playlist = [];
+    state.currentIndex = -1;
+    renderPlaylist();
+    updateTrackCounter();
+    document.getElementById('appTitleText').innerText = 'Windows Media Player v2.1 (Build 21)';
+    showOsd("Плейлист очищено");
+  }
+
+  function moveTrackUp() {
+    if (state.currentIndex > 0) {
+      const temp = state.playlist[state.currentIndex];
+      state.playlist[state.currentIndex] = state.playlist[state.currentIndex - 1];
+      state.playlist[state.currentIndex - 1] = temp;
+      state.currentIndex--;
+      renderPlaylist();
+    }
+  }
+
+  function moveTrackDown() {
+    if (state.currentIndex >= 0 && state.currentIndex < state.playlist.length - 1) {
+      const temp = state.playlist[state.currentIndex];
+      state.playlist[state.currentIndex] = state.playlist[state.currentIndex + 1];
+      state.playlist[state.currentIndex + 1] = temp;
+      state.currentIndex++;
+      renderPlaylist();
+    }
+  }
+
+  function exportPlaylistM3U() {
+    if (state.playlist.length === 0) {
+      alert("Плейлист порожній!");
+      return;
+    }
+    let m3u = "#EXTM3U\n";
+    state.playlist.forEach(t => {
+      m3u += `#EXTINF:-1,${t.name}\n${t.url}\n`;
+    });
+    const blob = new Blob([m3u], { type: 'audio/x-mpegurl' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = "playlist_wmp21.m3u";
+    a.click();
+    showOsd("Плейлист збережено (.m3u)");
+  }
+
+  function importPlaylistFile() {
+    playlistInput.click();
+  }
+
+  function handlePlaylistFileImport(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target.result;
+      const lines = content.split('\n');
+      lines.forEach(line => {
+        line = line.trim();
+        if (line && !line.startsWith('#')) {
+          const name = line.substring(line.lastIndexOf('/') + 1) || line;
+          addTrackToPlaylist({ name, url: line, isUrl: true }, false);
+        }
+      });
+      showOsd("Плейлист завантажено");
+    };
+    reader.readAsText(file);
+  }
+
+  /* ==========================================================================
+     FILE HANDLING & DRAG AND DROP
+     ========================================================================== */
+  function openFileDialog() {
+    fileInput.click();
+  }
+
+  function handleFilesSelected(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    files.forEach((file, index) => {
+      const url = URL.createObjectURL(file);
+      addTrackToPlaylist({
+        name: file.name,
+        url: url,
+        file: file,
+        durationStr: '--:--'
+      }, index === 0);
+    });
+    showOsd(`Додано файлів: ${files.length}`);
+  }
+
+  function setupDragAndDrop() {
+    const screen = document.getElementById('playerScreen');
+    const win = document.getElementById('mainWindow');
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      win.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        screen.classList.add('drag-over');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      win.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        screen.classList.remove('drag-over');
+      });
+    });
+
+    win.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) {
+        files.forEach((file, index) => {
+          if (file.name.endsWith('.srt') || file.name.endsWith('.vtt')) {
+            loadSubtitleFromFile(file);
+          } else {
+            const url = URL.createObjectURL(file);
+            addTrackToPlaylist({
+              name: file.name,
+              url: url,
+              file: file,
+              durationStr: '--:--'
+            }, index === 0);
+          }
+        });
+        showOsd(`Завантажено файлів: ${files.length}`);
+      }
+    });
+  }
+
+  /* ==========================================================================
+     SUBTITLES ENGINE (.SRT / .VTT)
+     ========================================================================== */
+  function openSubtitleDialog() {
+    subInput.click();
+  }
+
+  function handleSubtitleLoaded(e) {
+    const file = e.target.files[0];
+    if (file) loadSubtitleFromFile(file);
+  }
+
+  function loadSubtitleFromFile(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      parseSubtitles(e.target.result);
+      showOsd("Субтитри завантажено");
+    };
+    reader.readAsText(file);
+  }
+
+  function parseSubtitles(text) {
+    state.subtitles = [];
+    const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    const blocks = normalized.split('\n\n');
+    blocks.forEach(block => {
+      const lines = block.split('\n');
+      let timeLine = lines.find(l => l.includes('-->'));
+      if (timeLine) {
+        const parts = timeLine.split('-->');
+        const start = parseTimestamp(parts[0].trim());
+        const end = parseTimestamp(parts[1].trim());
+        const textLines = lines.slice(lines.indexOf(timeLine) + 1).join('<br>');
+        if (!isNaN(start) && !isNaN(end)) {
+          state.subtitles.push({ start, end, text: textLines });
+        }
+      }
+    });
+  }
+
+  function parseTimestamp(timeStr) {
+    const clean = timeStr.replace(',', '.');
+    const parts = clean.split(':');
+    if (parts.length === 3) {
+      return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+    } else if (parts.length === 2) {
+      return parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
+    }
+    return 0;
+  }
+
+  function updateSubtitlesDisplay(currentTime) {
+    if (!state.subtitles.length) {
+      subtitlesOverlay.innerHTML = '';
+      return;
+    }
+    const currentSub = state.subtitles.find(s => currentTime >= s.start && currentTime <= s.end);
+    if (currentSub) {
+      subtitlesOverlay.innerHTML = currentSub.text;
+    } else {
+      subtitlesOverlay.innerHTML = '';
+    }
+  }
+
+  /* ==========================================================================
+     VIDEO EFFECTS & FILTERS
+     ========================================================================== */
+  function updateVideoFilters() {
+    const b = document.getElementById('vfxBrightness').value;
+    const c = document.getElementById('vfxContrast').value;
+    const s = document.getElementById('vfxSaturate').value;
+    const h = document.getElementById('vfxHue').value;
+
+    document.getElementById('valBrightness').innerText = `${b}%`;
+    document.getElementById('valContrast').innerText = `${c}%`;
+    document.getElementById('valSaturate').innerText = `${s}%`;
+    document.getElementById('valHue').innerText = `${h}°`;
+
+    player.style.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) hue-rotate(${h}deg)`;
+  }
+
+  function resetVideoFilters() {
+    document.getElementById('vfxBrightness').value = 100;
+    document.getElementById('vfxContrast').value = 100;
+    document.getElementById('vfxSaturate').value = 100;
+    document.getElementById('vfxHue').value = 0;
+    updateVideoFilters();
+    setAspectRatio('contain');
+    document.getElementById('aspectRatioSelect').value = 'contain';
+    showOsd("Відеоефекти скинуто");
+  }
+
+  function setAspectRatio(ratio) {
+    if (ratio === 'fill') {
+      player.style.objectFit = 'fill';
+      player.style.aspectRatio = 'auto';
+    } else if (ratio === '16/9') {
+      player.style.objectFit = 'contain';
+      player.style.aspectRatio = '16/9';
+    } else if (ratio === '4/3') {
+      player.style.objectFit = 'contain';
+      player.style.aspectRatio = '4/3';
+    } else {
+      player.style.objectFit = 'contain';
+      player.style.aspectRatio = 'auto';
+    }
+  }
+
+  function stepFrame(frames) {
+    if (player.duration) {
+      player.pause();
+      setPlayingState(false);
+      player.currentTime += frames * (1 / 30);
+    }
+  }
+
+  function captureSnapshot() {
+    if (!player.videoWidth) {
+      alert("Немає активного відеокадру для збереження знімку!");
+      return;
+    }
+    const snapCanvas = document.createElement('canvas');
+    snapCanvas.width = player.videoWidth;
+    snapCanvas.height = player.videoHeight;
+    const ctx = snapCanvas.getContext('2d');
+    ctx.drawImage(player, 0, 0, snapCanvas.width, snapCanvas.height);
+    const a = document.createElement('a');
+    a.href = snapCanvas.toDataURL('image/png');
+    a.download = `wmp_snapshot_${Math.floor(player.currentTime)}s.png`;
+    a.click();
+    showOsd("Знімок кадру збережено!");
+  }
+
+  /* ==========================================================================
+     CANVAS VISUALIZER (6 RETRO MODES)
+     ========================================================================== */
+  function cycleVisualizer() {
+    state.visMode = (state.visMode + 1) % state.visModesNames.length;
+    screenVisInfo.innerText = `VIS: ${state.visModesNames[state.visMode]}`;
+    showOsd(`Visualizer: ${state.visModesNames[state.visMode]}`);
+    playUiBeep(900, 'triangle', 0.03);
+  }
+
+  function handleScreenClick(e) {
+    if (player.videoWidth === 0 || !state.isPlaying) {
+      cycleVisualizer();
+    }
+  }
+
+  // Starfield Simulation State
+  const stars = Array.from({ length: 120 }, () => ({
+    x: (Math.random() - 0.5) * 600,
+    y: (Math.random() - 0.5) * 400,
+    z: Math.random() * 600
+  }));
+
+  // Matrix Rain State
+  const matrixCols = 32;
+  const matrixDrops = Array(matrixCols).fill(1);
+
+  // Peak caps for Spectrum bars
+  const peakCaps = Array(64).fill(0);
+
+  function startVisualizerLoop() {
+    const bufferLength = state.analyser ? state.analyser.frequencyBinCount : 128;
+    const freqData = new Uint8Array(bufferLength);
+    const timeData = new Uint8Array(bufferLength);
+
+    function renderFrame() {
+      requestAnimationFrame(renderFrame);
+
+      const width = visCanvas.width;
+      const height = visCanvas.height;
+
+      // If video is active and playing, visualizer is optional overlay
+      if (player.videoWidth > 0) {
+        canvasCtx.clearRect(0, 0, width, height);
+        return;
+      }
+
+      if (state.analyser && state.isPlaying) {
+        state.analyser.getByteFrequencyData(freqData);
+        state.analyser.getByteTimeDomainData(timeData);
+      } else {
+        // Subtle idle motion
+        for (let i = 0; i < bufferLength; i++) {
+          freqData[i] = Math.sin(Date.now() * 0.003 + i * 0.1) * 15 + 15;
+          timeData[i] = 128 + Math.sin(Date.now() * 0.005 + i * 0.2) * 5;
+        }
+      }
+
+      // Clear Canvas
+      canvasCtx.fillStyle = '#000000';
+      canvasCtx.fillRect(0, 0, width, height);
+
+      // Render Mode
+      switch (state.visMode) {
+        case 0:
+          renderSpectrumBars(freqData, width, height);
+          break;
+        case 1:
+          renderOscilloscope(timeData, width, height);
+          break;
+        case 2:
+          renderStereoVuMeters(freqData, width, height);
+          break;
+        case 3:
+          renderLaserStars(freqData, width, height);
+          break;
+        case 4:
+          renderMatrixRain(freqData, width, height);
+          break;
+        case 5:
+          renderSonicRing(freqData, width, height);
+          break;
+      }
+    }
+
+    requestAnimationFrame(renderFrame);
+  }
+
+  // 1. Classic Spectrum Bars (Winamp / WMP 90s style)
+  function renderSpectrumBars(data, width, height) {
+    const barsCount = 32;
+    const barWidth = (width / barsCount) - 2;
+
+    for (let i = 0; i < barsCount; i++) {
+      const val = data[i * 2] || 0;
+      const barHeight = (val / 255) * (height - 30);
+
+      // Peak cap fall physics
+      if (barHeight > peakCaps[i]) {
+        peakCaps[i] = barHeight;
+      } else {
+        peakCaps[i] = Math.max(0, peakCaps[i] - 1.2);
+      }
+
+      const x = i * (barWidth + 2) + 2;
+      const y = height - barHeight - 10;
+
+      // Vintage LED Segment Gradient (Green -> Yellow -> Red)
+      const grad = canvasCtx.createLinearGradient(0, height - 10, 0, 10);
+      grad.addColorStop(0, '#00ff44');
+      grad.addColorStop(0.65, '#ffff00');
+      grad.addColorStop(1, '#ff2200');
+
+      canvasCtx.fillStyle = grad;
+      canvasCtx.fillRect(x, y, barWidth, barHeight);
+
+      // Peak Cap
+      canvasCtx.fillStyle = '#ffffff';
+      canvasCtx.fillRect(x, height - peakCaps[i] - 12, barWidth, 2);
+    }
+  }
+
+  // 2. Phosphor Oscilloscope (Green Wave)
+  function renderOscilloscope(data, width, height) {
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = '#00ff66';
+    canvasCtx.shadowBlur = 8;
+    canvasCtx.shadowColor = '#00ff66';
+
+    canvasCtx.beginPath();
+    const sliceWidth = width / data.length;
+    let x = 0;
+
+    for (let i = 0; i < data.length; i++) {
+      const v = data[i] / 128.0;
+      const y = (v * height) / 2;
+      if (i === 0) canvasCtx.moveTo(x, y);
+      else canvasCtx.lineTo(x, y);
+      x += sliceWidth;
+    }
+    canvasCtx.stroke();
+    canvasCtx.shadowBlur = 0;
+  }
+
+  // 3. Vintage Dual VU Meters
+  function renderStereoVuMeters(data, width, height) {
+    const leftVal = (data[2] || 0) / 255;
+    const rightVal = (data[6] || 0) / 255;
+    const meterW = width / 2 - 16;
+    const meterH = height - 40;
+
+    drawSingleVu(10, 20, meterW, meterH, leftVal, "LEFT (CH 1)");
+    drawSingleVu(width / 2 + 6, 20, meterW, meterH, rightVal, "RIGHT (CH 2)");
+  }
+
+  function drawSingleVu(x, y, w, h, level, label) {
+    canvasCtx.fillStyle = '#181818';
+    canvasCtx.strokeStyle = '#555';
+    canvasCtx.strokeRect(x, y, w, h);
+    canvasCtx.fillRect(x, y, w, h);
+
+    // Meter scale arc
+    canvasCtx.strokeStyle = '#777';
+    canvasCtx.lineWidth = 1;
+    canvasCtx.beginPath();
+    canvasCtx.arc(x + w / 2, y + h + 10, w * 0.7, Math.PI * 1.2, Math.PI * 1.8);
+    canvasCtx.stroke();
+
+    // Needle angle
+    const angle = Math.PI * 1.25 + level * (Math.PI * 0.5);
+    const needleLen = w * 0.65;
+    const nx = x + w / 2 + Math.cos(angle) * needleLen;
+    const ny = y + h + 10 + Math.sin(angle) * needleLen;
+
+    canvasCtx.strokeStyle = level > 0.85 ? '#ff3333' : '#ffcc00';
+    canvasCtx.lineWidth = 2;
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(x + w / 2, y + h);
+    canvasCtx.lineTo(nx, ny);
+    canvasCtx.stroke();
+
+    // Peak LED
+    canvasCtx.fillStyle = level > 0.85 ? '#ff0000' : '#440000';
+    canvasCtx.beginPath();
+    canvasCtx.arc(x + w - 12, y + 14, 4, 0, Math.PI * 2);
+    canvasCtx.fill();
+
+    // Label
+    canvasCtx.fillStyle = '#00ff66';
+    canvasCtx.font = '9px monospace';
+    canvasCtx.fillText(label, x + 8, y + 16);
+  }
+
+  // 4. Laser Stars (Hyperspace Starfield)
+  function renderLaserStars(data, width, height) {
+    const bass = (data[1] || 0) / 255;
+    const speed = 2 + bass * 12;
+    const cx = width / 2;
+    const cy = height / 2;
+
+    stars.forEach(star => {
+      star.z -= speed;
+      if (star.z <= 0) {
+        star.z = 600;
+        star.x = (Math.random() - 0.5) * 600;
+        star.y = (Math.random() - 0.5) * 400;
+      }
+      const k = 200 / star.z;
+      const px = star.x * k + cx;
+      const py = star.y * k + cy;
+      const sz = Math.max(1, (1 - star.z / 600) * 4);
+
+      if (px >= 0 && px < width && py >= 0 && py < height) {
+        canvasCtx.fillStyle = bass > 0.6 ? '#ff00ff' : '#00ffff';
+        canvasCtx.fillRect(px, py, sz, sz);
+      }
+    });
+  }
+
+  // 5. Matrix Cyber Rain
+  function renderMatrixRain(data, width, height) {
+    canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    canvasCtx.fillRect(0, 0, width, height);
+
+    canvasCtx.fillStyle = '#00ff66';
+    canvasCtx.font = '10px monospace';
+
+    const colWidth = width / matrixCols;
+    for (let i = 0; i < matrixCols; i++) {
+      const char = String.fromCharCode(0x30A0 + Math.random() * 96);
+      const x = i * colWidth;
+      const y = matrixDrops[i] * 12;
+      canvasCtx.fillText(char, x, y);
+
+      const freqPower = (data[i % 16] || 0) / 255;
+      if (y > height && Math.random() > 0.95) {
+        matrixDrops[i] = 0;
+      }
+      matrixDrops[i] += 1 + freqPower * 2;
+    }
+  }
+
+  // 6. Sonic Ring / Radial Spectrum
+  function renderSonicRing(data, width, height) {
+    const cx = width / 2;
+    const cy = height / 2;
+    const baseRadius = 45;
+    const count = 48;
+
+    canvasCtx.beginPath();
+    for (let i = 0; i < count; i++) {
+      const val = (data[i] || 0) / 255;
+      const r = baseRadius + val * 40;
+      const rad = (i / count) * Math.PI * 2;
+      const x = cx + Math.cos(rad) * r;
+      const y = cy + Math.sin(rad) * r;
+      if (i === 0) canvasCtx.moveTo(x, y);
+      else canvasCtx.lineTo(x, y);
+    }
+    canvasCtx.closePath();
+    canvasCtx.strokeStyle = '#00ffea';
+    canvasCtx.lineWidth = 2;
+    canvasCtx.shadowBlur = 10;
+    canvasCtx.shadowColor = '#00ffea';
+    canvasCtx.stroke();
+    canvasCtx.shadowBlur = 0;
+  }
+
+  /* ==========================================================================
+     BUILT-IN RETRO DEMO TRACKS & WEB AUDIO CHIPTUNE SYNTH
+     ========================================================================== */
+  function loadDemoTrack(id, autoPlay = true) {
+    if (id === 1) {
+      addTrackToPlaylist({
+        name: "Retro Synthwave 90s (Built-in WebAudio)",
+        isSynth: true,
+        synthId: 1,
+        durationStr: "02:15"
+      }, autoPlay);
+    } else if (id === 2) {
+      addTrackToPlaylist({
+        name: "Chiptune Windows Anthem (Built-in)",
+        isSynth: true,
+        synthId: 2,
+        durationStr: "01:45"
+      }, autoPlay);
+    } else if (id === 3) {
+      // Demo Video Stream
+      addTrackToPlaylist({
+        name: "Big Buck Bunny 720p HD Trailer",
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        isUrl: true,
+        durationStr: "09:56"
+      }, autoPlay);
+    }
+  }
+
+  function startSynthDemo(type) {
+    stopSynth();
+    state.isSynthPlaying = true;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    let step = 0;
+    // Chiptune scales & arpeggios
+    const notes1 = [261.63, 329.63, 392.00, 523.25, 440.00, 349.23, 392.00, 293.66];
+    const notes2 = [523.25, 659.25, 783.99, 1046.50, 880.00, 698.46, 783.99, 587.33];
+
+    state.synthInterval = setInterval(() => {
+      if (!state.isSynthPlaying) return;
+      try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type === 1 ? 'sawtooth' : 'square';
+        
+        const note = type === 1 ? notes1[step % notes1.length] : notes2[step % notes2.length];
+        osc.frequency.setValueAtTime(note, ctx.currentTime);
+        
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+
+        if (state.analyser) {
+          osc.connect(gain);
+          gain.connect(state.analyser);
+        } else {
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+        }
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.18);
+        step++;
+      } catch (e) {}
+    }, 140);
+
+    setPlayingState(true);
+    statusMessage.innerText = "Відтворення (Синтезатор)";
+    currentTimeBadge.innerText = "SYNTH";
+    totalDurationBadge.innerText = "LIVE";
+  }
+
+  function pauseSynth() {
+    state.isSynthPlaying = false;
+  }
+
+  function resumeSynth() {
+    state.isSynthPlaying = true;
+  }
+
+  function stopSynth() {
+    if (state.synthInterval) {
+      clearInterval(state.synthInterval);
+      state.synthInterval = null;
+    }
+    state.isSynthPlaying = false;
+  }
+
+  /* ==========================================================================
+     STREAM URL & NETWORK DIALOGS
+     ========================================================================== */
+  function openUrlDialog() {
+    openModal('urlModal');
+  }
+
+  function setStreamPreset(url, name) {
+    document.getElementById('streamUrlInput').value = url;
+  }
+
+  function submitStreamUrl() {
+    const url = document.getElementById('streamUrlInput').value.trim();
+    if (!url) return;
+    const name = url.substring(url.lastIndexOf('/') + 1) || "Network Stream";
+    addTrackToPlaylist({
+      name: `[Stream] ${name}`,
+      url: url,
+      isUrl: true,
+      durationStr: "LIVE"
+    }, true);
+    closeModal('urlModal');
+    showOsd("Потік додано до відтворення");
+  }
+
+  /* ==========================================================================
+     FULLSCREEN & PICTURE-IN-PICTURE
+     ========================================================================== */
+  function toggleFullscreen() {
+    const screen = document.getElementById('playerScreen');
+    if (!document.fullscreenElement) {
+      if (screen.requestFullscreen) screen.requestFullscreen();
+      else if (screen.webkitRequestFullscreen) screen.webkitRequestFullscreen();
+      showOsd("Повний екран");
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      showOsd("Віконний режим");
+    }
+  }
+
+  async function togglePiP() {
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else if (player.videoWidth > 0) {
+        await player.requestPictureInPicture();
+      } else {
+        alert("Режим Picture-in-Picture доступний лише для активних відеофайлів.");
+      }
+    } catch(err) {
+      console.warn("PiP Error:", err);
+    }
+  }
+
+  /* ==========================================================================
+     MODALS & WINDOW TOGGLING
+     ========================================================================== */
+  function toggleWindow(winId) {
+    const w = document.getElementById(winId);
+    if (!w) return;
+    const isActive = w.classList.contains('active');
+    w.classList.toggle('active', !isActive);
+    playUiBeep(isActive ? 400 : 700, 'sine', 0.03);
+  }
+
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add('active');
+      playUiBeep(750, 'sine', 0.04);
+    }
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.remove('active');
+      playUiBeep(450, 'sine', 0.03);
+    }
+  }
+
+  function setTheme(themeClass) {
+    document.body.className = themeClass;
+    showOsd(`Theme: ${themeClass.toUpperCase()}`);
+    playUiBeep(650, 'sine', 0.03);
+  }
+
+  function toggleMenu(e, menuId) {
+    e.stopPropagation();
+    const item = e.currentTarget;
+    const isActive = item.classList.contains('active');
+    closeAllMenus();
+    if (!isActive) item.classList.add('active');
+  }
+
+  function closeAllMenus() {
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.menu-bar')) {
+      closeAllMenus();
+    }
   });
+
+  function toggleMinimize() {
+    const screen = document.getElementById('playerScreen');
+    const isMin = screen.style.display === 'none';
+    screen.style.display = isMin ? 'flex' : 'none';
+    showOsd(isMin ? "Розгорнуто" : "Згорнуто");
+  }
+
+  function toggleMaximize() {
+    toggleFullscreen();
+  }
+
+  function closeApp() {
+    stopMedia();
+    alert("Дякуємо за використання Windows Media Player v2.1 (Build 21)!");
+  }
+
+  /* ==========================================================================
+     KEYBOARD SHORTCUTS
+     ========================================================================== */
+  function setupKeyboardShortcuts() {
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        state.isPlaying ? pauseMedia() : playMedia();
+      } else if (e.code === 'KeyS') {
+        stopMedia();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        seekRelative(e.shiftKey ? -15 : -5);
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        seekRelative(e.shiftKey ? 15 : 5);
+      } else if (e.code === 'ArrowUp') {
+        e.preventDefault();
+        volumeSlider.value = Math.min(1, parseFloat(volumeSlider.value) + 0.05);
+        volumeSlider.dispatchEvent(new Event('input'));
+        showOsd(`Гучність: ${Math.round(volumeSlider.value * 100)}%`);
+      } else if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        volumeSlider.value = Math.max(0, parseFloat(volumeSlider.value) - 0.05);
+        volumeSlider.dispatchEvent(new Event('input'));
+        showOsd(`Гучність: ${Math.round(volumeSlider.value * 100)}%`);
+      } else if (e.code === 'KeyM') {
+        toggleMute();
+      } else if (e.code === 'KeyF') {
+        toggleFullscreen();
+      } else if (e.code === 'KeyN') {
+        playNextTrack();
+      } else if (e.code === 'KeyP') {
+        playPrevTrack();
+      } else if (e.code === 'KeyL') {
+        toggleWindow('playlistWindow');
+      } else if (e.code === 'KeyE') {
+        toggleWindow('eqWindow');
+      } else if (e.code === 'KeyV') {
+        toggleWindow('videoFxWindow');
+      } else if (e.code === 'KeyR') {
+        cycleRepeatMode();
+      } else if (e.code === 'Tab') {
+        e.preventDefault();
+        cycleVisualizer();
+      } else if (e.ctrlKey && e.code === 'KeyO') {
+        e.preventDefault();
+        openFileDialog();
+      } else if (e.ctrlKey && e.code === 'KeyU') {
+        e.preventDefault();
+        openUrlDialog();
+      }
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
 </script>
 
 </body>
